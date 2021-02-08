@@ -1,41 +1,36 @@
 class Perceptron:
+    inputs = None
+    output = None
 
-    def __init__(self, ID, t, inputs, weights, bias):
+    def __init__(self, ID, weights, bias):
         """
         Initializes perceptron with needed attributes
         :param ID: Name of perceptron
-        :param t: threshold
-        :param inputs: list of inputs
         :param weights: list of weights (inputwise) (order of the elements should correspond with the order of inputs)
         :param bias: integer that stands for the bias
         """
         self.ID = ID
-        self.t = t
-        self.inputs = inputs
         self.weights = weights
         self.bias = bias
 
-    def calc_output(self):
+    def calc_output(self, inputs):
         """
         Calculates the output of the perceptron using the input values and corresponding weights and the bias
         to compare with the threshold
         :return: Boolean value
         """
-        if len(self.inputs) != len(self.weights):
+        if len(inputs) != len(self.weights):
             raise ValueError("The amount of inputs and the amount of weights do not correspond")
         else:
             # multiplies input values with corresponding weights
-            paths = [a * b for a, b in zip(self.inputs, self.weights)]
-            output = (self.bias + sum(paths)) >= self.t
-            return output
+            paths = [a * b for a, b in zip(inputs, self.weights)]
+            # output gets a bitwise value by converting a boolean expression into an integer
+            self.output = int((self.bias + sum(paths)) >= 0)
+            self.inputs = inputs
+            return self.output
 
     def __str__(self):
-        return f"""
-        id: {self.ID}
-        inputs: {self.inputs}
-        weights: {self.weights}
-        threshold: {self.t}
-        output: {self.calc_output()}
+        return f"""id: {self.ID}, inputs: {self.inputs}, weights: {self.weights}, bias: {self.bias}, output: {self.output}
         """
 
     "__**== Getters and Setters ==**__"
@@ -44,13 +39,6 @@ class Perceptron:
 
     def set_ID(self, ID):
         self.ID = ID
-
-
-    def get_t(self):
-        return self.t
-
-    def set_t(self, t):
-        self.t = t
 
 
     def get_weights(self):
@@ -67,13 +55,6 @@ class Perceptron:
         self.bias = bias
 
 
-    def get_inputs(self):
-        return self.inputs
-
-    def set_inputs(self, inputs):
-        self.inputs = inputs
-
-
     def get_output(self):
         return self.output
 
@@ -81,13 +62,21 @@ class Perceptron:
         self.output = output
 
 # INVERT gate
-P1 = Perceptron(1, -0.5, [1], [-1], 0)
+P1 = Perceptron(ID=1, weights=[-1], bias=0)
+print(P1.calc_output([1]))
 print(P1)
 
 # AND gate
-P2 = Perceptron(2, 1, [1,1], [0.5, 0.5], 0)
+P2 = Perceptron(ID=2, weights=[0.5, 0.5], bias=-1)
+print(P2.calc_output([1,1]))
 print(P2)
 
 # OR gate
-P3 = Perceptron(3, 0.5, [0, 0], [0.5, 0.5], 0)
+P3 = Perceptron(ID=3, weights=[1,1], bias=-1)
+P3.calc_output([0,1])
 print(P3)
+
+# NOR gate
+P4 = Perceptron(ID=4, weights=[-1, -1], bias=1)
+P4.calc_output([1,0])
+print(P4)
